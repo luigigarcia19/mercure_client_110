@@ -10,6 +10,7 @@ abstract class Mercure extends Stream<MercureEvent> {
     required String url,
     required List<String> topics,
     String? token,
+    String? userAgent,
     String? lastEventId,
   }) = MercureClient;
 }

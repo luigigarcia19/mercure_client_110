@@ -17,6 +17,7 @@ class MercureClient extends Stream<MercureEvent> implements Mercure {
     required this.url,
     required this.topics,
     this.token,
+    this.userAgent,
     this.lastEventId,
   });
 
@@ -33,11 +34,15 @@ class MercureClient extends Stream<MercureEvent> implements Mercure {
   /// at the time of the generation of this resource.
   String? lastEventId;
 
+  /// User Agent
+  String? userAgent;
+
   /// Format request uri
   Uri get hubUri {
     final queryParameters = <String>[
       for (final topic in topics) 'topic=${Uri.encodeComponent(topic)}',
       if (token != null) 'authorization=$token',
+      if (userAgent != null) 'User-Agent=$userAgent',
       if (lastEventId != null) 'Last-Event-ID=$lastEventId',
     ].join('&');
 

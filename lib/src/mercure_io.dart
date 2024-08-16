@@ -16,6 +16,7 @@ class MercureClient extends RetryStream<MercureEvent> implements Mercure {
     required this.url,
     required this.topics,
     this.token,
+    this.userAgent,
     this.lastEventId,
   });
 
@@ -38,6 +39,9 @@ class MercureClient extends RetryStream<MercureEvent> implements Mercure {
   /// Regex to find end of MercureEvent
   static const String _kEndOfMessage = '\r\n\r\n|\n\n|\r\r';
 
+  /// User Agent
+  String? userAgent;
+
   @override
   Stream<MercureEvent> subscribe() async* {
     final _client = http.Client();
@@ -47,6 +51,7 @@ class MercureClient extends RetryStream<MercureEvent> implements Mercure {
         url,
         topics,
         authorization: token,
+        userAgent: userAgent,
         lastEventId: lastEventId,
       ));
 
@@ -96,6 +101,7 @@ class MercureRequest extends http.Request {
     String hub,
     List<String> topics, {
     this.authorization,
+    this.userAgent,
     this.lastEventId,
   }) : super('GET', build(hub, topics));
 
@@ -126,12 +132,16 @@ class MercureRequest extends http.Request {
   /// Last event id provided by the hub
   final String? lastEventId;
 
+  /// User Agent
+  final String? userAgent;
+
   @override
   Map<String, String> get headers {
     return {
       'Accept': accept,
       'Cache-Control': cacheControl,
       if (authorization != null) 'Authorization': 'Bearer $authorization',
+      if (userAgent != null) 'User-Agent': userAgent!,
       if (lastEventId != null) 'Last-Event-ID': lastEventId!,
     };
   }
